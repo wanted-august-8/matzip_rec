@@ -1,13 +1,13 @@
-package com.skeleton.api.skeleton_api;
+package com.matzip.api.matzip_api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SkeletonApiApplication {
+public class MatzipApiApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SkeletonApiApplication.class, args);
+        SpringApplication.run(MatzipApiApplication.class, args);
     }
 
 }
