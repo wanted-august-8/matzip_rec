@@ -10,6 +10,16 @@
         </encoder>
     </appender>
 
+    <!-- 1. Output SQL to console-->
+    <logger name="org.hibernate.SQL" additivity="false" level="DEBUG" >
+        <appender-ref ref="SERVICE_LOG_APPENDER"/>
+    </logger>
+
+    <!-- 2. Output SQL parameters-->
+    <logger name="org.hibernate.orm.jdbc.bind" additivity="false" level="TRACE" >
+        <appender-ref ref="SERVICE_LOG_APPENDER"/>
+    </logger>
+
     <root>
         <level value="INFO"/>
         <appender-ref ref="SERVICE_LOG_APPENDER"/>
