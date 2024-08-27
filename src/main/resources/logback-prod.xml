@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <appender name="SERVICE_LOG_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/prod/app.log</file>
+        <file>logs/matzip/prod/app.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>logs/prod/app.%d{yyyy-MM-dd}.log</fileNamePattern>
         </rollingPolicy>
