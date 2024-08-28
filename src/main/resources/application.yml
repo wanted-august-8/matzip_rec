@@ -1,0 +1,69 @@
+spring:
+  application:
+    name: matzip
+
+  # default profile 설정
+  profiles:
+    active: local
+
+  # MySQL 데이터베이스 설정
+  datasource:
+    url: jdbc:mysql://localhost:3306/matzip
+    username: august8
+    password: august8!
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # JPA 설정
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        highlight_sql: true
+
+  # Spring Security 설정
+  security:
+    user:
+      name: admin
+      password: admin
+
+  # DevTools 설정 (자동 재시작)
+  devtools:
+    restart:
+      enabled: true
+  # Redis 설정
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: august8!
+
+# logback 설정
+logging:
+  config: classpath:logback-${spring.profiles.active}.xml
+
+# Springdoc OpenAPI 설정
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+---
+# 로컬 개발 환경 설정
+# local' 프로파일 활성화 시 적용.
+spring:
+  config:
+    activate:
+      on-profile: local
+
+---
+# 운영(Production) 환경 설정
+# 'prod' 프로파일 활성화 시 적용.
+spring:
+  config:
+    activate:
+      on-profile: prod

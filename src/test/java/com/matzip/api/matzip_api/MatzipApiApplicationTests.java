@@ -1,10 +1,10 @@
-package com.skeleton.api.skeleton_api;
+package com.matzip.api.matzip_api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SkeletonApiApplicationTests {
+class MatzipApiApplicationTests {
 
 	@Test
 	void contextLoads() {
