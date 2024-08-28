@@ -39,6 +39,7 @@ public class Restrt {
     private String bsnsite_circumfr_div_nm;
     private String sanittn_indutype_nm;
     private String sanittn_bizcond_nm;
+    private Integer tot_emply_cnt;
     private String refine_roadnm_addr;
     private String refine_lotno_addr;
     private String refine_zip_cd;
