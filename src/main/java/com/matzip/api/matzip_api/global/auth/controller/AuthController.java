@@ -19,7 +19,7 @@ public class AuthController {
     private final AuthService authService;
 
     /**
-     *  사용자 회원가입
+     * 사용자 회원가입
      *
      * @param signUpRequestDto 회원가입 요청 DTO
      * @return 사용자 Id
