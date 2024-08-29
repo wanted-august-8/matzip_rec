@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,8 +32,11 @@ public class User {
     @Length(max = 300)
     private String password;
 
-    private double lat;
-    private double logt;
+    @Column(precision = 8, scale = 6)  // 위도: 소수점 이하 6자리까지 정밀도
+    private BigDecimal lat;
+
+    @Column(precision = 9, scale = 6)  // 경도: 소수점 이하 6자리까지 정밀도
+    private BigDecimal logt;
 
     @Column(name = "use_lunch_recommendation", nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
     private boolean useLunchRecommendation;
