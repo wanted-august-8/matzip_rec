@@ -20,7 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final String[] PERMIT_URL_ARRAY = {
-        "/v3/api-docs/**", "/swagger-ui/**", "/v3/api-docs",
+        "/v3/api-docs/**", "/swagger-ui/**", "/v3/api-docs", "/swagger-ui.html",
         "/error", "/signup", "/login"
     };
 
