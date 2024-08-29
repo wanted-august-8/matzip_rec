@@ -39,12 +39,13 @@ public class Restrt {
     private String bsnsite_circumfr_div_nm;
     private String sanittn_indutype_nm;
     private String sanittn_bizcond_nm;
+    private Integer tot_emply_cnt;
     private String refine_roadnm_addr;
     private String refine_lotno_addr;
     private String refine_zip_cd;
-    @Column(precision = 10, scale = 8)
+    @Column(precision = 8, scale = 6)
     private BigDecimal refine_wgs84_lat;
-    @Column(precision = 11, scale = 8)
+    @Column(precision = 9, scale = 6)
     private BigDecimal refine_wgs84_logt;
     private double review;
     private String restrt_nm;

@@ -1,3 +1,7 @@
+server:
+  servlet:
+    context-path: /api
+
 spring:
   application:
     name: matzip
@@ -10,7 +14,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/matzip
     username: august8
-    password: august8!
+    password: August8!
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   # JPA 설정
@@ -39,7 +43,8 @@ spring:
     redis:
       host: localhost
       port: 6379
-      password: august8!
+      password: August8!
+      connect-timeout: 2000ms
 
 # logback 설정
 logging:
