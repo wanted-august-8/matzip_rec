@@ -5,11 +5,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
@@ -17,6 +17,7 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
 public class User {
 
     @Id
@@ -31,25 +32,18 @@ public class User {
     @Length(max = 300)
     private String password;
 
-    private double lat;
-    private double logt;
+    @Column(precision = 8, scale = 6)  // 위도: 소수점 이하 6자리까지 정밀도
+    private BigDecimal lat;
 
-    @Column(name = "use_lunch_recommendation", nullable = false)
+    @Column(precision = 9, scale = 6)  // 경도: 소수점 이하 6자리까지 정밀도
+    private BigDecimal logt;
+
+    @Column(name = "use_lunch_recommendation", nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
     private boolean useLunchRecommendation;
 
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
-    @Column(name = "modified_at")
+    @Column(name = "modified_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime modifiedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();  // 최초 저장 시에만 설정
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.modifiedAt = LocalDateTime.now();  // 업데이트될 때마다 수정 시간 설정
-    }
 }
