@@ -2,10 +2,8 @@ package com.matzip.api.matzip_api.global;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-
 @Getter
 public class CommonResponse<T> {
-
     private final HttpStatus httpStatus;
     private final String message;
     private final T data;
@@ -33,3 +31,5 @@ public class CommonResponse<T> {
     }
 
 }
+
+
