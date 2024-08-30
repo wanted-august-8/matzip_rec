@@ -3,12 +3,7 @@ name: CI-CD
 on:
   push:
     branches:
-      - feature/jr_CICD_refactor
-#  pull_request:
-#    branches:
-#      - dev
-#    types:
-#      - closed  # PR이 닫힐 때(머지될 때 포함) 트리거
+      - dev
 
 env:
   S3_BUCKET_NAME: wanted-preonboarding-s3
