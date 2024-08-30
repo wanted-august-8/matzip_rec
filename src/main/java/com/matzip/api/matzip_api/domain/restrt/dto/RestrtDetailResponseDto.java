@@ -1,31 +1,19 @@
-package com.matzip.api.matzip_api.domain.restrt.entity;
+package com.matzip.api.matzip_api.domain.restrt.dto;
 
-import com.matzip.api.matzip_api.domain.review.entity.Review;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import com.matzip.api.matzip_api.domain.review.dto.ReviewResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name="restrt")
+import java.math.BigDecimal;
+import java.util.List;
+
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Restrt {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class RestrtDetailResponseDto {
     private Long id;
     private String sigun_nm;
     private String sigun_cd;
@@ -48,18 +36,10 @@ public class Restrt {
     private String refine_roadnm_addr;
     private String refine_lotno_addr;
     private String refine_zip_cd;
-    @Column(precision = 8, scale = 6)
     private BigDecimal refine_wgs84_lat;
-    @Column(precision = 9, scale = 6)
     private BigDecimal refine_wgs84_logt;
     private double review;
     private String restrt_nm;
 
-    @OneToMany(mappedBy = "restrt", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Review> reviews = new ArrayList<>();
-
-    // 평점 평균을 추가하는 편의 메서드
-    public void setReview(double review) {
-        this.review = review;
-    }
+    private List<ReviewResponseDto> reviews;
 }
