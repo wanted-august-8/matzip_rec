@@ -46,9 +46,6 @@ spring:
       port: 6379
       password: August8!
 
-# logback 설정
-logging:
-  config: classpath:logback-${spring.profiles.active}.xml
 
 # Springdoc OpenAPI 설정
 springdoc:
