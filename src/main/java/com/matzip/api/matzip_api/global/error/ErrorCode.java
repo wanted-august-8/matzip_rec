@@ -1,6 +1,7 @@
 package com.matzip.api.matzip_api.global.error;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,8 @@ public enum ErrorCode {
     ACCOUNT_ALREADY_REGISTERED(HttpStatus.CONFLICT, "이미 등록된 계정입니다."),
 
     // 맛집
-    RESTRT_NOT_FOUND(HttpStatus.BAD_REQUEST, "식당을 찾을 수 없습니다.");
+    RESTRT_NOT_FOUND(HttpStatus.BAD_REQUEST, "식당을 찾을 수 없습니다."),
+    RESTRT_FETCH_FAILED(INTERNAL_SERVER_ERROR, "식당 정보를 저장하는 데 실패했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
