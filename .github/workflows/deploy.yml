@@ -27,7 +27,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - uses: actions/checkout@v4
-      - run: touch ./src/main/resources/application-prod.yml
+      - run: touch ./src/main/resources/application.yml
       - run: echo "${{secrets.APPLICATION_CONF_1}}" > ./src/main/resources/application-prod.yml
       - uses: actions/upload-artifact@v4
         with:
