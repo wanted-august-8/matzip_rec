@@ -8,7 +8,9 @@ import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,14 +25,22 @@ public class RestrtService {
     }
 
     @Transactional
+    @Scheduled(cron = "0 0 6 * * ?")
+    // 50초마다 실행되는 테스트 코드
+//    @Scheduled(fixedRate = 50000)
     public void fetchData() throws Exception {
         List<String> categories = List.of("Genrestrtjpnfood", "Genrestrtchifood", "Genrestrtfastfood");
 
         for (String category : categories) {
-            System.out.println("Fetching data for category: " + category);
             List<RestrtDTO> restaurants = openApiService.fetchAllData(category);
-            System.out.println("Number of restaurants fetched: " + restaurants.size());
+
             for (RestrtDTO dto : restaurants) {
+                Optional<Restrt> existingRestrt = restrtRepository.findByRestrtNm(dto.getRestrtNm());
+                if (existingRestrt.isPresent()) {
+                    System.out.println("이미 저장된 식당입니다: " + dto.getBizplcNm());
+                    continue;
+                }
+
                 Restrt restrt = new Restrt();
                 restrt.setSigunNm(dto.getSigunNm() != null ? dto.getSigunNm() : "");
                 restrt.setSigunCd(dto.getSigunCd() != null ? dto.getSigunCd() : "");

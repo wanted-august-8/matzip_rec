@@ -3,6 +3,7 @@ package com.matzip.api.matzip_api.domain.restrt.controller;
 import com.matzip.api.matzip_api.domain.restrt.service.RestrtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
