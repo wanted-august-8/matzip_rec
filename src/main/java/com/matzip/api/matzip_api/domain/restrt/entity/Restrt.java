@@ -49,4 +49,8 @@ public class Restrt {
     private BigDecimal refine_wgs84_logt;
     private double review;
     private String restrt_nm;
+
+    public void setReview(double review) {
+        this.review = review;
+    }
 }

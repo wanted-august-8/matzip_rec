@@ -7,6 +7,20 @@ plugins {
 group = 'com.matzip.api'
 version = '0.0.1-SNAPSHOT'
 
+jar {
+	enabled = false
+}
+
+sourceSets {
+	main {
+		resources {
+			exclude("logback-prod.xml")
+			exclude("logback-local.xml")
+		}
+	}
+}
+
+
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(17)

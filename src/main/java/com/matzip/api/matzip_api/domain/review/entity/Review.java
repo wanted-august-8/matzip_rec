@@ -1,5 +1,7 @@
 package com.matzip.api.matzip_api.domain.review.entity;
 
+import com.matzip.api.matzip_api.domain.restrt.entity.Restrt;
+import com.matzip.api.matzip_api.domain.user.entity.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,11 +27,11 @@ public class Review {
     private int score;
     private String content;
 
-//    @ManyToOne
-//    @JoinColumn(name ="user_id")
-//    User user;
+    @ManyToOne
+    @JoinColumn(name ="user_id")
+    User user;
 
-//    @ManyToOne
-//    @JoinColumn(name = "restrt_id")
-//    Restrt restrt;
+    @ManyToOne
+    @JoinColumn(name = "restrt_id")
+    Restrt restrt;
 }

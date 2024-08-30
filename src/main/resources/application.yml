@@ -44,7 +44,6 @@ spring:
       host: localhost
       port: 6379
       password: August8!
-      connect-timeout: 2000ms
 
 # logback 설정
 logging:
