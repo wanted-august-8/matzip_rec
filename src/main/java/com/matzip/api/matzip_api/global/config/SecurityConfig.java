@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matzip.api.matzip_api.global.auth.filter.LoginFilter;
 import com.matzip.api.matzip_api.global.exception.JwtAuthenticationException;
 import com.matzip.api.matzip_api.global.auth.filter.JwtFilter;
-import com.matzip.api.matzip_api.global.auth.util.JwtUtil;
+import com.matzip.api.matzip_api.global.auth.util.JwtTokenProvider;
 import com.matzip.api.matzip_api.global.error.ErrorCode;
 import com.matzip.api.matzip_api.global.error.ErrorResponse;
 import jakarta.servlet.http.HttpServletResponse;
@@ -37,11 +37,11 @@ public class SecurityConfig {
 
     private final String[] PERMIT_URL_ARRAY = {
         "/v3/api-docs/**", "/swagger-ui/**", "/v3/api-docs", "/swagger-ui.html",
-        "/error", "/signup", "/login"
+        "/error", "/signup", "/login", "/reissue"
     };
     private final ObjectMapper objectMapper;
     private final AuthenticationConfiguration authenticationConfiguration;
-    private final JwtUtil jwtUtil;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -59,8 +59,9 @@ public class SecurityConfig {
             .exceptionHandling(exceptionHandling -> exceptionHandling
                 .authenticationEntryPoint(authenticationEntryPoint)
                 .accessDeniedHandler(accessDeniedHandler))
-            .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
-            .addFilterAt(new LoginFilter(objectMapper, authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(new JwtFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+            .addFilterAt(new LoginFilter(objectMapper, authenticationManager(authenticationConfiguration),
+                jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
 

@@ -14,16 +14,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JwtUtil {
+public class JwtTokenProvider {
 
     private final SecretKey secretKey;
-    private final Long expiration;
+    private final Long accessExpiration;
+    private final Long refreshExpiration;
 
-    public JwtUtil(@Value("${jwt.secret}") String secret,
-        @Value("${jwt.token-validate-in-seconds}") String expiration) {
+    public JwtTokenProvider(@Value("${jwt.secret}") String secret,
+        @Value("${jwt.access-token-validate-in-seconds}") String accessExpiration,
+        @Value("${jwt.refresh-token-validate-in-seconds}") String refreshExpiration) {
         this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
             Jwts.SIG.HS256.key().build().getAlgorithm());
-        this.expiration = Long.parseLong(expiration) * 1000;
+        this.accessExpiration = Long.parseLong(accessExpiration) * 1000;
+        this.refreshExpiration = Long.parseLong(refreshExpiration) * 1000;
     }
 
     public void validateToken(String token) {
@@ -41,11 +44,21 @@ public class JwtUtil {
             .get("account", String.class);
     }
 
-    public String createJwt(String username) {
+    public String getCategory(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
+    }
+
+    public boolean isCategoryOf(String token, String category) {
+        return getCategory(token).equals(category);
+    }
+
+    public String createJwt(String category, String username) {
         return Jwts.builder()
+            .claim("category", category)
             .claim("account", username)
             .issuedAt(new Date(System.currentTimeMillis()))
-            .expiration(new Date(System.currentTimeMillis() + expiration))
+            .expiration(new Date(
+                System.currentTimeMillis() + (category.equals("refresh") ? refreshExpiration: accessExpiration)))
             .signWith(secretKey)
             .compact();
     }

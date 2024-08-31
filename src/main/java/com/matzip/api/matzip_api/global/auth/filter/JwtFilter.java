@@ -2,7 +2,7 @@ package com.matzip.api.matzip_api.global.auth.filter;
 
 import com.matzip.api.matzip_api.domain.user.entity.User;
 import com.matzip.api.matzip_api.global.auth.domain.CustomUserDetails;
-import com.matzip.api.matzip_api.global.auth.util.JwtUtil;
+import com.matzip.api.matzip_api.global.auth.util.JwtTokenProvider;
 import com.matzip.api.matzip_api.global.error.ErrorCode;
 import com.matzip.api.matzip_api.global.exception.JwtAuthenticationException;
 import jakarta.servlet.FilterChain;
@@ -21,28 +21,32 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-        FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorization = request.getHeader("Authorization");
 
         try {
             // Authorization 헤더 검증
             if (authorization == null || !authorization.startsWith("Bearer ")) {
-                log.info("Authorization 토큰 정보 없음");
+                log.info("access 토큰 정보 없음");
                 throw new JwtAuthenticationException(ErrorCode.AUTHORIZATION_HEADER_MISSING);
             }
 
             //Bearer 부분 제거 후 순수 토큰만 획득
-            String token = authorization.split(" ")[1];
+            String accessToken = authorization.split(" ")[1];
 
             //토큰 유효성 검증
-            jwtUtil.validateToken(token);
+            jwtTokenProvider.validateToken(accessToken);
 
-            //토큰에서 username과 role 획득
-            String username = jwtUtil.getUsername(token);
+            //토큰에서 category와 username 획득
+            String category = jwtTokenProvider.getCategory(accessToken);
+            if (!category.equals("access")){
+                throw new JwtAuthenticationException(ErrorCode.INVALID_TOKEN);
+            }
+
+            String username = jwtTokenProvider.getUsername(accessToken);
 
             //userEntity를 생성하여 값 set
             User user = User.builder()
@@ -63,10 +67,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (JwtAuthenticationException e) {
-            log.error("JWT 인증 실패: {}", e.getMessage());
+            log.info("JWT 인증 실패: {}", e.getMessage());
             handleException(request, response, e, filterChain);
         } catch (Exception e) {
-            log.error("기타 인증 오류 발생: {}", e.getMessage());
+            log.info("기타 인증 오류 발생: {}", e.getMessage());
             handleException(request, response, new JwtAuthenticationException("기타 인증 에러 발생", e), filterChain);
         }
     }

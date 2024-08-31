@@ -5,8 +5,11 @@ import com.matzip.api.matzip_api.global.auth.dto.SignUpRequestDto;
 import com.matzip.api.matzip_api.global.auth.service.AuthService;
 import com.matzip.api.matzip_api.global.exception.CustomException;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,5 +36,18 @@ public class AuthController {
             authService.signUp(signUpRequestDto));
 
         return new ResponseEntity<>(response, response.getHttpStatus());
+    }
+
+    /**
+     * Access Token 재발급, Refresh Token 갱신
+     *
+     * @return 200 Authorization Header AccessToken, Cookie RefreshToken 갱신
+     * @throws CustomException cookie에 Refresh Token이 존재하지 않는 경우
+     */
+    @Operation(summary = "Access Token 재발급, Refresh Token 갱신", description = "기존 Refresh Token으로 Access Token 재발급하고 Authorization Header에 반환합니다. Refresh Token또한 갱신하여 Cookie에 저장됩니다.")
+    @PostMapping("/reissue")
+    public ResponseEntity<CommonResponse<?>> reissueAccessToken(HttpServletRequest request, HttpServletResponse response) {
+        authService.reissueAccessToken(request, response);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
