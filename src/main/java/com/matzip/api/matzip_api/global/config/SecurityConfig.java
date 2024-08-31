@@ -21,7 +21,7 @@ public class SecurityConfig {
 
     private final String[] PERMIT_URL_ARRAY = {
         "/v3/api-docs/**", "/swagger-ui/**", "/v3/api-docs", "/swagger-ui.html",
-        "/error", "/signup", "/login","/health-check","/sgg"
+        "/error", "/signup", "/login","/health-check","/sgg/**"
     };
 
     @Bean

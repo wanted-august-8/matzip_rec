@@ -47,6 +47,8 @@ dependencies {
 	//Redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	//fileupload
+	implementation 'org.apache.commons:commons-csv:1.11.0'
 
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	compileOnly 'org.projectlombok:lombok'
