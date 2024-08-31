@@ -15,7 +15,12 @@ public enum ErrorCode {
     ACCOUNT_ALREADY_REGISTERED(HttpStatus.CONFLICT, "이미 등록된 계정입니다."),
 
     // 맛집
-    RESTRT_NOT_FOUND(HttpStatus.BAD_REQUEST, "식당을 찾을 수 없습니다.");
+    RESTRT_NOT_FOUND(HttpStatus.BAD_REQUEST, "식당을 찾을 수 없습니다."),
+
+    //시군구
+    SGG_DATA_ISEMPTY(BAD_REQUEST,"데이터베이스가 비어 있습니다. 데이터를 추가한 후 다시 시도해 주세요.")
+
+    ;
 
     private final HttpStatus httpStatus;
     private final String message;
