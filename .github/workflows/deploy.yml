@@ -21,12 +21,9 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+
       - uses: actions/checkout@v4
-      - run: echo "${{secrets.APPLICATION_CONF_1}}" > ./src/main/resources/application-prod.yml
-      - uses: actions/upload-artifact@v4
-        with:
-          name: application-prod.yml
-          path: ./src/main/resources/application-prod.yml
+      - run: echo "${{secrets.APPLICATION_CONF_1}}" > ./src/main/resources/application.yml
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
