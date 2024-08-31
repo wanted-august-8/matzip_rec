@@ -48,10 +48,6 @@ public class JwtTokenProvider {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
     }
 
-    public boolean isCategoryOf(String token, String category) {
-        return getCategory(token).equals(category);
-    }
-
     public String createJwt(String category, String username) {
         return Jwts.builder()
             .claim("category", category)

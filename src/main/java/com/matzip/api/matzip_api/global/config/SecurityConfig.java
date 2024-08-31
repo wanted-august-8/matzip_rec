@@ -1,12 +1,12 @@
 package com.matzip.api.matzip_api.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.matzip.api.matzip_api.global.auth.filter.LoginFilter;
-import com.matzip.api.matzip_api.global.exception.JwtAuthenticationException;
 import com.matzip.api.matzip_api.global.auth.filter.JwtFilter;
-import com.matzip.api.matzip_api.global.auth.util.JwtTokenProvider;
+import com.matzip.api.matzip_api.global.auth.filter.LoginFilter;
+import com.matzip.api.matzip_api.global.auth.util.TokenManager;
 import com.matzip.api.matzip_api.global.error.ErrorCode;
 import com.matzip.api.matzip_api.global.error.ErrorResponse;
+import com.matzip.api.matzip_api.global.exception.JwtAuthenticationException;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -41,7 +41,7 @@ public class SecurityConfig {
     };
     private final ObjectMapper objectMapper;
     private final AuthenticationConfiguration authenticationConfiguration;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final TokenManager tokenManager;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -59,9 +59,9 @@ public class SecurityConfig {
             .exceptionHandling(exceptionHandling -> exceptionHandling
                 .authenticationEntryPoint(authenticationEntryPoint)
                 .accessDeniedHandler(accessDeniedHandler))
-            .addFilterBefore(new JwtFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new JwtFilter(tokenManager), UsernamePasswordAuthenticationFilter.class)
             .addFilterAt(new LoginFilter(objectMapper, authenticationManager(authenticationConfiguration),
-                jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+                tokenManager), UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
 

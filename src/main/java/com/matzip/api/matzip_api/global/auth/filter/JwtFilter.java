@@ -2,7 +2,7 @@ package com.matzip.api.matzip_api.global.auth.filter;
 
 import com.matzip.api.matzip_api.domain.user.entity.User;
 import com.matzip.api.matzip_api.global.auth.domain.CustomUserDetails;
-import com.matzip.api.matzip_api.global.auth.util.JwtTokenProvider;
+import com.matzip.api.matzip_api.global.auth.util.TokenManager;
 import com.matzip.api.matzip_api.global.error.ErrorCode;
 import com.matzip.api.matzip_api.global.exception.JwtAuthenticationException;
 import jakarta.servlet.FilterChain;
@@ -21,7 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final TokenManager tokenManager;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -30,7 +30,7 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             // Authorization 헤더 검증
             if (authorization == null || !authorization.startsWith("Bearer ")) {
-                log.info("access 토큰 정보 없음");
+                log.info("Authorization header 정보 없음");
                 throw new JwtAuthenticationException(ErrorCode.AUTHORIZATION_HEADER_MISSING);
             }
 
@@ -38,15 +38,14 @@ public class JwtFilter extends OncePerRequestFilter {
             String accessToken = authorization.split(" ")[1];
 
             //토큰 유효성 검증
-            jwtTokenProvider.validateToken(accessToken);
+            tokenManager.validateToken(accessToken);
 
             //토큰에서 category와 username 획득
-            String category = jwtTokenProvider.getCategory(accessToken);
-            if (!category.equals("access")){
+            if (!tokenManager.isAccessToken(accessToken)){
                 throw new JwtAuthenticationException(ErrorCode.INVALID_TOKEN);
             }
 
-            String username = jwtTokenProvider.getUsername(accessToken);
+            String username = tokenManager.getUsername(accessToken);
 
             //userEntity를 생성하여 값 set
             User user = User.builder()
