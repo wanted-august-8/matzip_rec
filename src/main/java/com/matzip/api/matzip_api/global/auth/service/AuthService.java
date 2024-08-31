@@ -47,7 +47,9 @@ public class AuthService {
             throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
 
+        tokenManager.validateRefreshToken(refreshToken);
         String username = tokenManager.getUsername(refreshToken);
+        tokenManager.deleteRefreshToken(refreshToken);
         tokenManager.issueTokens(response, username);
     }
 }
