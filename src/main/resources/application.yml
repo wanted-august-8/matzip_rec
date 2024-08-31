@@ -45,6 +45,11 @@ spring:
       port: 6379
       password: august8!
 
+# JWT 설정
+jwt:
+  secret: 48b1139d703a1d10f9d0f718445fd9ccab85d5169131598f4ac55d913a7e17d7
+  token-validate-in-seconds: 10800 # 3시간
+
 # logback 설정
 logging:
   config: classpath:logback-${spring.profiles.active}.xml

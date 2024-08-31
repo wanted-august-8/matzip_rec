@@ -1,16 +1,32 @@
 package com.matzip.api.matzip_api.global.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.matzip.api.matzip_api.global.auth.filter.LoginFilter;
+import com.matzip.api.matzip_api.global.exception.JwtAuthenticationException;
+import com.matzip.api.matzip_api.global.auth.filter.JwtFilter;
+import com.matzip.api.matzip_api.global.auth.util.JwtUtil;
+import com.matzip.api.matzip_api.global.error.ErrorCode;
+import com.matzip.api.matzip_api.global.error.ErrorResponse;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Slf4j
 @Configuration
@@ -23,6 +39,9 @@ public class SecurityConfig {
         "/v3/api-docs/**", "/swagger-ui/**", "/v3/api-docs", "/swagger-ui.html",
         "/error", "/signup", "/login"
     };
+    private final ObjectMapper objectMapper;
+    private final AuthenticationConfiguration authenticationConfiguration;
+    private final JwtUtil jwtUtil;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -36,12 +55,46 @@ public class SecurityConfig {
                 SessionCreationPolicy.STATELESS)
             )
             .formLogin(AbstractHttpConfigurer::disable)
-            .logout(AbstractHttpConfigurer::disable);
+            .logout(AbstractHttpConfigurer::disable)
+            .exceptionHandling(exceptionHandling -> exceptionHandling
+                .authenticationEntryPoint(authenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler))
+            .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+            .addFilterAt(new LoginFilter(objectMapper, authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
+        throws Exception {
+        return configuration.getAuthenticationManager();
+    }
+
+    private final AuthenticationEntryPoint authenticationEntryPoint =
+        (request, response, authException) -> {
+            log.error("인증 실패: {}", authException.getMessage());
+            ErrorCode errorCode = ErrorCode.AUTHENTICATION_FAILED;
+            if (authException instanceof JwtAuthenticationException) {
+                errorCode = ((JwtAuthenticationException) authException).getErrorCode();
+            }
+            sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, errorCode);
+        };
+
+    private final AccessDeniedHandler accessDeniedHandler =
+        (request, response, accessDeniedException) ->{
+            log.error("Access Denied: {}", accessDeniedException.getMessage());
+            sendErrorResponse(response, HttpServletResponse.SC_FORBIDDEN, ErrorCode.ACCESS_DENIED);
+        };
+
+    private static void sendErrorResponse(HttpServletResponse response, int status, ErrorCode errorCode) throws IOException {
+        response.setStatus(status);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.getWriter().write(new ObjectMapper().writeValueAsString(new ErrorResponse(errorCode, errorCode.getMessage())));
     }
 }
