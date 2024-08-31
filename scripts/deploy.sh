@@ -2,23 +2,38 @@
 #!/bin/bash
 
 REPOSITORY="/home/ec2-user/app"  # 애플리케이션이 있는 경로
-PORT=8080  # 사용할 포트 번호
 LOG_FILE="/home/ec2-user/app/deploy.sh.log"  # 로그 파일 경로
 
+# Function to prepend current timestamp to each line of log output
+timestamp() {
+    while IFS= read -r line; do
+        echo "$(date +'%Y-%m-%d %H:%M:%S') $line"
+    done
+}
+
 # 로그 파일에 기록하도록 exec를 사용하여 STDOUT 및 STDERR를 리디렉션합니다.
-exec > >(tee -a $LOG_FILE) 2>&1
+exec > >(timestamp | tee -a "$LOG_FILE") 2>&1
 
-# 8080 포트에 서비스가 있는지 확인하고, 있다면 종료합니다.
-echo "> Checking for application running on port: $PORT"
-CURRENT_PID=$(sudo lsof -t -i :$PORT)
+echo "> ======================================================="
 
-if [ -n "$CURRENT_PID" ]; then
-  echo "> Application running on port $PORT with PID: $CURRENT_PID"
-  echo "> Stopping application with PID: $CURRENT_PID"
-  sudo kill -15 $CURRENT_PID
+echo $USER
+
+# PATH 환경 변수에 JDK 경로 추가
+export PATH=$PATH:/usr/bin/java
+
+# Java 프로세스를 확인하고, 있다면 종료합니다.
+echo "> Checking for running Java processes"
+JAVA_PIDS=$(pgrep -f 'java.*')
+
+if [ -n "$JAVA_PIDS" ]; then
+  echo "> Found Java processes with PIDs: $JAVA_PIDS"
+  for PID in $JAVA_PIDS; do
+    echo "> Stopping Java process with PID: $PID"
+    sudo kill -15 $PID
+  done
   sleep 5  # 애플리케이션이 종료될 때까지 대기
 else
-  echo "> No application is running on port $PORT"
+  echo "> No Java processes found"
 fi
 
 # 최신 JAR 파일을 찾아 실행합니다.
@@ -36,4 +51,13 @@ nohup java -jar -Duser.timezone=Asia/Seoul -Dlogging.config=file:$LOGBACK_CONFIG
 
 # 실행 후 애플리케이션의 PID를 출력합니다.
 NEW_PID=$(pgrep -f $JAR_NAME)
-echo "> Currently running matzip application PID: $NEW_PID"
+
+if [ -n "$NEW_PID" ]; then
+  echo "> Currently running matzip application PID: $NEW_PID"
+else
+  echo "> Application failed to start."
+  exit 1
+fi
+
+echo "> ======================================================="
+
