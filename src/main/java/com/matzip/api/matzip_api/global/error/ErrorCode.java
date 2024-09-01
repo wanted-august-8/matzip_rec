@@ -1,6 +1,7 @@
 package com.matzip.api.matzip_api.global.error;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,12 @@ public enum ErrorCode {
     RESTRT_NOT_FOUND(HttpStatus.BAD_REQUEST, "식당을 찾을 수 없습니다."),
 
     //시군구
-    SGG_DATA_ISEMPTY(BAD_REQUEST,"데이터베이스가 비어 있습니다. 데이터를 추가한 후 다시 시도해 주세요.")
+    SGG_DATA_ISEMPTY(BAD_REQUEST,"데이터베이스가 비어 있습니다. 데이터를 추가한 후 다시 시도해 주세요."),
+    INVALID_FILE_FORMAT(BAD_REQUEST, "파일 형식이 유효하지 않습니다."),
+
+    //file
+    FILE_READ_ERROR(INTERNAL_SERVER_ERROR, "파일 읽기 오류가 발생했습니다."),
+
 
     ;
 
