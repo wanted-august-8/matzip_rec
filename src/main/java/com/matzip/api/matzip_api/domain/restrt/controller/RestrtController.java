@@ -39,6 +39,9 @@ public class RestrtController {
         @RequestParam("lat") String lat, @RequestParam("lon") String lon,
         @RequestParam("range") double range, @RequestParam(value = "sort", required = false, defaultValue = "distance") String sort
         ) {
+
+        if (!sort.equals("distance") && !sort.equals("rating")) throw new CustomException(SORT_PARAMETER_INVALID);
+
         List<RestrtListByResponseDto> dtos = restrtService.getRestrtListByLatAndLon(lat, lon, range, sort);
 
         String message;
