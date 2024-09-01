@@ -9,10 +9,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name="sgg")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -26,7 +28,14 @@ public class Sgg {
 
     private String ssg; //시군구
 
-    private double logt; //경도
+    private double logt; //경도 lon
 
     private double lat; //위도
+
+    public Sgg(String doSi,String ssg, double logt,double lat){
+        this.doSi = doSi;
+        this.ssg = ssg;
+        this.logt = logt;
+        this.lat = lat;
+    }
 }

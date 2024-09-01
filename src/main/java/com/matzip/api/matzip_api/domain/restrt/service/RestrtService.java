@@ -1,18 +1,26 @@
 package com.matzip.api.matzip_api.domain.restrt.service;
 
 import com.matzip.api.matzip_api.domain.restrt.dto.RestrtDTO;
+import com.matzip.api.matzip_api.domain.restrt.dto.RestrtDetailResponseDto;
+import com.matzip.api.matzip_api.domain.review.dto.ReviewResponseDto;
 import com.matzip.api.matzip_api.domain.restrt.entity.Restrt;
+import com.matzip.api.matzip_api.domain.review.entity.Review;
 import com.matzip.api.matzip_api.domain.restrt.repository.RestrtRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import java.util.HashSet;
+import com.matzip.api.matzip_api.global.CommonResponse;
+import com.matzip.api.matzip_api.global.error.ErrorCode;
+import com.matzip.api.matzip_api.global.exception.CustomException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RestrtService {
