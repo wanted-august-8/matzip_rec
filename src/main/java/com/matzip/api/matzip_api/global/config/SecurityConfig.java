@@ -38,7 +38,7 @@ public class SecurityConfig {
     private final String[] PERMIT_URL_ARRAY = {
         "/v3/api-docs/**", "/swagger-ui/**", "/v3/api-docs", "/swagger-ui.html",
         "/error", "/signup", "/login", "/reissue",
-        "/health-check","/sgg/**"
+        "/health-check","/sgg/**","/restrt/**"
     };
     private final ObjectMapper objectMapper;
     private final AuthenticationConfiguration authenticationConfiguration;
