@@ -27,7 +27,6 @@ public enum ErrorCode {
 
     // 맛집
     RESTRT_NOT_FOUND(HttpStatus.BAD_REQUEST, "식당을 찾을 수 없습니다."),
-    RESTRT_FETCH_FAILED(INTERNAL_SERVER_ERROR, "식당 정보를 저장하는 데 실패했습니다."),
 
     //시군구
     SGG_DATA_ISEMPTY(BAD_REQUEST,"데이터베이스가 비어 있습니다. 데이터를 추가한 후 다시 시도해 주세요."),
