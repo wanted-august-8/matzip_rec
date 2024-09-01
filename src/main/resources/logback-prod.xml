@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+
+    <property name="LOG_PATH" value="/home/ec2-user/app/logs" />
+    <property name="LOG_FILE_PREFIX" value="matzip_api" />
+    <property name="LOG_FILE_EXT" value="log" />
+
     <appender name="SERVICE_LOG_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/matzip/prod/app.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/prod/app.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_PATH}/${LOG_FILE_PREFIX}_%d{yyyyMMdd}_%i.${LOG_FILE_EXT}</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>300MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+            <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
         </encoder>
     </appender>
 
