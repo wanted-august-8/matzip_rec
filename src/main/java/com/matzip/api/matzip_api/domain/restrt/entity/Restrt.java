@@ -53,7 +53,7 @@ public class Restrt {
     @Column(precision = 9, scale = 6)
     private BigDecimal refine_wgs84_logt;
     private double review;
-    private String restrt_nm;
+    private String restrtNm;
 
     @OneToMany(mappedBy = "restrt", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
