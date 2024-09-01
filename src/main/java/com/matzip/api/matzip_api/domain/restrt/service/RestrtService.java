@@ -9,8 +9,10 @@ import com.matzip.api.matzip_api.global.CommonResponse;
 import com.matzip.api.matzip_api.global.error.ErrorCode;
 import com.matzip.api.matzip_api.global.exception.CustomException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class RestrtService {
 
     private final RestrtRepository restrtRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    private static final String CACHE_KEY_PREFIX = "restrt:";
+    private static final long CACHE_EXPIRATION = 600; // 600초 = 10분
+
 
     /**
      * 맛집의 상세 정보를 조회하는 메서드
@@ -29,6 +36,15 @@ public class RestrtService {
      */
     @Transactional(readOnly = true)
     public CommonResponse<RestrtDetailResponseDto> getRestrtDetail(Long id) {
+        String cacheKey = CACHE_KEY_PREFIX + id;
+
+        // 캐시에서 데이터 조회
+        RestrtDetailResponseDto cachedData = (RestrtDetailResponseDto) redisTemplate.opsForValue().get(cacheKey);
+        if (cachedData != null) {
+            return CommonResponse.ok("맛집 상세 정보를 반환합니다. (캐시)", cachedData);
+        }
+
+        // 캐시에 데이터가 없는 경우 DB에서 조회
         // ID로 맛집 정보를 조회하고 동시에 리뷰도 함께 가져옴
         Restrt restrt = restrtRepository.findWithReviewsAndUsersById(id)
             .orElseThrow(() -> new CustomException(ErrorCode.RESTRT_NOT_FOUND));
@@ -40,6 +56,11 @@ public class RestrtService {
 
         // RestrtDetailResponseDto 객체를 생성
         RestrtDetailResponseDto responseDto = buildRestrtDetailResponseDto(restrt, reviews);
+
+        // 데이터를 캐시에 저장
+        if (restrt.getReviews().size() >= 1) { // 리뷰가 1개 이상일 경우에만 데이터 저장
+            redisTemplate.opsForValue().set(cacheKey, responseDto, CACHE_EXPIRATION, TimeUnit.SECONDS);
+        }
 
         return CommonResponse.ok("맛집 상세 정보를 반환합니다.", responseDto);
     }
