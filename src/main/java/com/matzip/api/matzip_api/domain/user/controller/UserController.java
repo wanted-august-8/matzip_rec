@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -57,5 +58,19 @@ public class UserController {
     ) {
         UserResponseDto userResponseDto = userService.updateLunchRecommendationPreference(userId, lunchRecommendationDto);
         return ResponseEntity.ok(CommonResponse.ok("업데이트에 성공했습니다.", userResponseDto));
+    }
+
+    /**
+     * 패스워드를 제외한 모든 사용자 정보를 반환합니다.
+     *
+     * @param userId 사용자 ID
+     * @return 패스워드를 제외한 사용자 정보
+     */
+    @Operation(summary = "사용자 정보 조회", description = "패스워드를 제외한 모든 사용자 정보를 반환합니다.")
+    @ApiResponse(responseCode = "200", description = "사용자 정보가 성공적으로 조회됨")
+    @GetMapping("/{userId}")
+    public ResponseEntity<CommonResponse<UserResponseDto>> getUser(@PathVariable Long userId) {
+        UserResponseDto userResponseDto = userService.getUser(userId);
+        return ResponseEntity.ok(CommonResponse.ok("사용자 정보 조회에 성공했습니다.", userResponseDto));
     }
 }
