@@ -56,12 +56,4 @@ public class Restrt {
     private BigDecimal refineWgs84Logt;
     private double review;
     private String restrtNm;
-
-    @OneToMany(mappedBy = "restrt", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Review> reviews = new ArrayList<>();
-
-    // 평점 평균을 추가하는 편의 메서드
-    public void setReview(double review) {
-        this.review = review;
-    }
 }
