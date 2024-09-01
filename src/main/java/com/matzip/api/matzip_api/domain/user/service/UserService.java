@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Service
 public class UserService {
+
     private final UserRepository userRepository;
 
     /**
@@ -21,7 +22,8 @@ public class UserService {
      */
     @Transactional
     public UserResponseDto updateUserLocation(Long userId, LocationUpdateDto locationUpdateDto) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         user.updateLocation(locationUpdateDto.getLat(), locationUpdateDto.getLogt());
         return toUserResponseDto(user);
@@ -31,8 +33,10 @@ public class UserService {
      * 점심 추천 기능 사용 여부를 업데이트합니다.
      */
     @Transactional
-    public UserResponseDto updateLunchRecommendationPreference(Long userId, LunchRecommendationDto lunchRecommendationDto) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    public UserResponseDto updateLunchRecommendationPreference(Long userId,
+        LunchRecommendationDto lunchRecommendationDto) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         user.updateUseLunchRecommendation(lunchRecommendationDto.isUseLunchRecommendation());
         return toUserResponseDto(user);
@@ -49,5 +53,14 @@ public class UserService {
             .logt(user.getLogt())
             .useLunchRecommendation(user.isUseLunchRecommendation())
             .build();
+    }
+
+    /**
+     * 사용자 정보를 조회하여 패스워드를 제외한 정보를 반환합니다.
+     */
+    @Transactional(readOnly = true)
+    public UserResponseDto getUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        return toUserResponseDto(user);
     }
 }
