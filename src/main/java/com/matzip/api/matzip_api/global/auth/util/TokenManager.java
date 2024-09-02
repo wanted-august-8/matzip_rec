@@ -20,10 +20,10 @@ public class TokenManager {
         jwtTokenProvider.validateToken(token);
     }
 
-    public void issueTokens(HttpServletResponse response, String username) {
+    public void issueTokens(HttpServletResponse response, String username, Long userId) {
         // JWT 생성
-        String accessToken = jwtTokenProvider.createJwt("access", username);
-        String refreshToken = jwtTokenProvider.createJwt("refresh", username);
+        String accessToken = jwtTokenProvider.createJwt("access", username, userId);
+        String refreshToken = jwtTokenProvider.createJwt("refresh", username, userId);
 
         // Redis에 Refresh Token 저장
         saveRefreshToken(username, refreshToken);
@@ -52,6 +52,9 @@ public class TokenManager {
 
     public String getUsername(String token) {
         return jwtTokenProvider.getUsername(token);
+    }
+    public Long getUserId(String token){
+        return jwtTokenProvider.getUserId(token);
     }
 
     // Refresh Token Redis에 저장

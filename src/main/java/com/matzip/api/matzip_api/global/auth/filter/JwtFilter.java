@@ -46,9 +46,11 @@ public class JwtFilter extends OncePerRequestFilter {
             }
 
             String username = tokenManager.getUsername(accessToken);
+            Long userId = tokenManager.getUserId(accessToken);
 
             //userEntity를 생성하여 값 set
             User user = User.builder()
+                .id(userId)
                 .account(username)
                 .password("temp")
                 .build();
