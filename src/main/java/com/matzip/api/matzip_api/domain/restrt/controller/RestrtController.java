@@ -61,5 +61,4 @@ public class RestrtController {
 
         return new ResponseEntity(CommonResponse.ok(message, dtos), HttpStatus.OK);
     }
-
 }
