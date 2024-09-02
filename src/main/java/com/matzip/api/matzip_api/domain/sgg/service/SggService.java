@@ -90,6 +90,7 @@ public class SggService {
             new InputStreamReader(file.getInputStream(), "UTF-8"))) {
             //기존 데이터 삭제
             jdbcTemplate.update("TRUNCATE TABLE sgg");
+            redisTemplate.delete(SGG_LIST_CACHE_KEY);
 
             // BOM제거
             reader.mark(1);
