@@ -31,9 +31,9 @@ public class ReviewService {
      * @return CommonResponse<String> 성공 메시지 반환
      */
     @Transactional
-    public CommonResponse createReview(ReviewCreateRequest request) {
+    public CommonResponse createReview(Long userId, ReviewCreateRequest request) {
         // 유저와 맛집 조회
-        User user = userRepository.findById(request.getUserId())
+        User user = userRepository.findById(userId)
             .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         Restrt restrt = restrtRepository.findById(request.getRestrtId())
             .orElseThrow(() -> new CustomException(ErrorCode.RESTRT_NOT_FOUND));

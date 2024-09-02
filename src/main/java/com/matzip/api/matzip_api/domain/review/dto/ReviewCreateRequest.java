@@ -15,9 +15,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReviewCreateRequest {
 
-    @NotNull(message = "사용자 ID는 필수 입력 값입니다.")
-    private Long userId;
-
     @NotNull(message = "맛집 ID는 필수 입력 값입니다.")
     private Long restrtId;
 

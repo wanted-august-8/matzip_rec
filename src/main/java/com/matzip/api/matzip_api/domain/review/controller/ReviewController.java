@@ -4,10 +4,12 @@ package com.matzip.api.matzip_api.domain.review.controller;
 import com.matzip.api.matzip_api.domain.review.dto.ReviewCreateRequest;
 import com.matzip.api.matzip_api.domain.review.service.ReviewService;
 import com.matzip.api.matzip_api.global.CommonResponse;
+import com.matzip.api.matzip_api.global.auth.domain.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,8 +23,8 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping
-    public ResponseEntity<CommonResponse> createReview(@Valid @RequestBody ReviewCreateRequest request) {
-        CommonResponse response = reviewService.createReview(request);
+    public ResponseEntity<CommonResponse> createReview(@AuthenticationPrincipal CustomUserDetails userDetails, @Valid @RequestBody ReviewCreateRequest request) {
+        CommonResponse response = reviewService.createReview(userDetails.getUserId(), request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }
