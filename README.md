@@ -149,8 +149,8 @@ localhost: [http://localhost:8080/api/swagger-ui/index.html](http://localhost:80
 ## 프로젝트 진행 및 이슈 관리
 <details>
   <summary><b>프로젝트 진행 및 이슈 관리</b></summary>
-    <img src= "docs/이슈관리1.png" width="430" height="600"/>
-    <img src= "docs/이슈관리2.png" width="430" height="600"/>
+  <img width="900" alt="이슈관리2" src="https://github.com/user-attachments/assets/3fec01c9-7b26-4f70-80f1-c2a409b47f37">
+  <img width="900" alt="이슈관리1" src="https://github.com/user-attachments/assets/384f0029-8677-4abe-a184-e24fb5bf38f4">
 </details>
 
 <br/>
