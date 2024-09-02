@@ -12,7 +12,6 @@ import com.matzip.api.matzip_api.global.error.ErrorCode;
 import com.matzip.api.matzip_api.global.exception.CustomException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +23,13 @@ public class ReviewService {
     private final RestrtRepository restrtRepository;
     private final UserRepository userRepository;
 
+    /**
+     * 리뷰를 생성하는 메서드 입니다.
+     * 요청을 검증하고, 리뷰를 생성 후 데이터베이스에 저장합니다.
+     *
+     * @param request 리뷰 요청을 담은 DTO 객체
+     * @return CommonResponse<String> 성공 메시지 반환
+     */
     @Transactional
     public CommonResponse createReview(ReviewCreateRequest request) {
         // 유저와 맛집 조회
@@ -47,6 +53,11 @@ public class ReviewService {
         return CommonResponse.ok("맛집 평가를 생성하였습니다.", review.getId());
     }
 
+    /**
+     * 맛집의 평점 평균을 수정하는 메서드입니다.
+     *
+     * @param restrt 리뷰의 주체인 맛집
+     */
     private void updateRestaurantRating(Restrt restrt) {
         List<Review> reviews = reviewRepository.findByRestrt(restrt);
         double averageScore = reviews.stream()
