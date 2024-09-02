@@ -5,6 +5,7 @@ import com.matzip.api.matzip_api.domain.review.dto.ReviewCreateRequest;
 import com.matzip.api.matzip_api.domain.review.service.ReviewService;
 import com.matzip.api.matzip_api.global.CommonResponse;
 import com.matzip.api.matzip_api.global.auth.domain.CustomUserDetails;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
+    @Operation(summary = "맛집 평가 셍성", description = "새로운 맛집 평가를 생성합니다.")
     @PostMapping
     public ResponseEntity<CommonResponse> createReview(@AuthenticationPrincipal CustomUserDetails userDetails, @Valid @RequestBody ReviewCreateRequest request) {
         CommonResponse response = reviewService.createReview(userDetails.getUserId(), request);
