@@ -45,11 +45,11 @@ public class RestrtListByResponseDto {
 
     public RestrtListByResponseDto (Restrt restrt) {
         this.id = restrt.getId();
-        this.sigun_nm = restrt.getSigun_nm();
-        this.sigun_cd = restrt.getSigun_cd();
-        this.bizplc_nm = restrt.getBizplc_nm();
-        this.licensg_de = restrt.getLicensg_de();
-        this.bsn_state_nm = restrt.getBsn_state_nm();
+        this.sigun_nm = restrt.getSigunNm();
+        this.sigun_cd = restrt.getSigunCd();
+        this.bizplc_nm = restrt.getBizplcNm();
+        this.licensg_de = restrt.getLicensgDe();
+        this.bsn_state_nm = restrt.getBsnStateNm();
 //        this.clsbiz_de = restrt.getClsbiz_de();
 //        this.locplc_ar = restrt.getLocplc_ar();
 //        this.grad_faclt_div_nm = restrt.getGrad_faclt_div_nm();
@@ -59,16 +59,16 @@ public class RestrtListByResponseDto {
 //        this.grad_div_nm = restrt.getGrad_div_nm();
 //        this.tot_faclt_scale = restrt.getTot_faclt_scale();
 //        this.female_enflpsn_cnt = restrt.getFemale_enflpsn_cnt();
-        this.bsnsite_circumfr_div_nm= restrt.getBsnsite_circumfr_div_nm();
-        this.sanittn_indutype_nm= restrt.getSanittn_indutype_nm();
-        this.sanittn_bizcond_nm = restrt.getSanittn_bizcond_nm();
-        this.tot_emply_cnt = restrt.getTot_emply_cnt();
-        this.refine_roadnm_addr = restrt.getRefine_roadnm_addr();
-        this.refine_lotno_addr = restrt.getRefine_lotno_addr();
-        this.refine_zip_cd = restrt.getRefine_zip_cd();
-        this.refine_wgs84_lat = restrt.getRefine_wgs84_lat();
-        this.refine_wgs84_logt = restrt.getRefine_wgs84_logt();
-        this.restrt_nm = restrt.getRestrt_nm();
+        this.bsnsite_circumfr_div_nm= restrt.getBsnsiteCircumfrDivNm();
+        this.sanittn_indutype_nm= restrt.getSanittnIndutypeNm();
+        this.sanittn_bizcond_nm = restrt.getSanittnBizcondNm();
+        this.tot_emply_cnt = restrt.getTotEmplyCnt();
+        this.refine_roadnm_addr = restrt.getRefineRoadnmAddr();
+        this.refine_lotno_addr = restrt.getRefineLotnoAddr();
+        this.refine_zip_cd = restrt.getRefineZipCd();
+        this.refine_wgs84_lat = restrt.getRefineWgs84Lat();
+        this.refine_wgs84_logt = restrt.getRefineWgs84Logt();
+        this.restrt_nm = restrt.getRestrtNm();
         this.review = restrt.getReview();
     }
 }
