@@ -15,4 +15,12 @@ public interface RestrtRepository extends JpaRepository<Restrt, Long> {
     // Restrt와 연관된 reviews 및 reviews의 User를 함께 가져오는 메서드
     @Query("SELECT r FROM Restrt r LEFT JOIN FETCH r.reviews rev LEFT JOIN FETCH rev.user WHERE r.id = :id ORDER BY rev.createdAt DESC")
     Optional<Restrt> findWithReviewsAndUsersById(Long id);
+
+    @Query("select r from Restrt r where r.refine_wgs84_lat between :minLat "
+        + "and :maxLat and r.refine_wgs84_logt between :minLon and :maxLon")
+    List<Restrt> findByLocation(double minLat, double maxLat, double minLon, double maxLon);
+  
+    @Query("select r from Restrt r where r.refine_wgs84_lat between :minLat "
+        + "and :maxLat and r.refine_wgs84_logt between :minLon and :maxLon order by r.review DESC")
+    List<Restrt> findByLocationOrderByReview(double minLat, double maxLat, double minLon, double maxLon);
 }

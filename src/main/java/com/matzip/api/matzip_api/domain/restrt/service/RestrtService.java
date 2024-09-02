@@ -2,6 +2,7 @@ package com.matzip.api.matzip_api.domain.restrt.service;
 
 import com.matzip.api.matzip_api.domain.restrt.dto.RestrtDTO;
 import com.matzip.api.matzip_api.domain.restrt.dto.RestrtDetailResponseDto;
+import com.matzip.api.matzip_api.domain.restrt.dto.findlist.RestrtListByResponseDto;
 import com.matzip.api.matzip_api.domain.restrt.entity.Restrt;
 import com.matzip.api.matzip_api.domain.restrt.repository.RestrtRepository;
 import com.matzip.api.matzip_api.domain.review.dto.ReviewResponseDto;
@@ -14,24 +15,29 @@ import jakarta.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RestrtService {
     private final OpenApiService openApiService;
     private final RestrtRepository restrtRepository;
-
     @PersistenceContext
     private EntityManager entityManager;
 
+    public static final double EARTH_RADIUS_KM = 6371.0; //지구의 평균 반지름
+  
     @Transactional
 //    매일 오전 6시 실행 운영 코드
     @Scheduled(cron = "0 0 6 * * ?")
@@ -109,6 +115,8 @@ public class RestrtService {
         entityManager.flush();
         entityManager.clear();
     }
+  
+
 
     /**
      * 맛집의 상세 정보를 조회하는 메서드
@@ -133,6 +141,114 @@ public class RestrtService {
 
         return CommonResponse.ok("맛집 상세 정보를 반환합니다.", responseDto);
     }
+
+    /**
+     * 반경 내 맛집 목록 조회
+     *
+     * @param lat 검색할 위도
+     * @param lon 검색할 경도
+     * @param range 검색할 범위
+     * @param sort 정렬(거리순, 평점순)
+     * @return 맛집 목록
+     * */
+    public List<RestrtListByResponseDto> getRestrtListByLatAndLon(String lat, String lon, double range, String sort) {
+        double parseDoublelat = Double.parseDouble(lat);
+        double parseDoublelon = Double.parseDouble(lon);
+
+        double[] boundingCoordinates = getBoundingCoordinates(parseDoublelat, parseDoublelon, range);
+        double bounding_maxLat = boundingCoordinates[0];
+        double bounding_minLat = boundingCoordinates[1];
+        double bounding_maxLon = boundingCoordinates[2];
+        double bounding_minLon = boundingCoordinates[3];
+
+        List<Restrt> restrts = null;
+        List<RestrtListByResponseDto> responseDtos = new ArrayList<>();
+
+        if (sort.equals("distance")) {
+            restrts = restrtRepository.findByLocation(bounding_minLat, bounding_maxLat,
+                bounding_minLon, bounding_maxLon);
+
+            if(restrts == null) return responseDtos;
+
+            // 거리순으로 정렬
+            restrts.sort(Comparator.comparingDouble(restrt ->
+                calculateDistance(parseDoublelat, parseDoublelon,
+                    restrt.getRefine_wgs84_lat().doubleValue(),
+                    restrt.getRefine_wgs84_logt().doubleValue())
+            ));
+
+            for (Restrt restrt: restrts){
+                responseDtos.add(new RestrtListByResponseDto(restrt));
+            }
+
+        }
+        if (sort.equals("rating")) {
+            restrts = restrtRepository.findByLocationOrderByReview(bounding_minLat, bounding_maxLat,
+                bounding_minLon, bounding_maxLon);
+
+            if(restrts == null) return responseDtos;
+
+            for (Restrt restrt: restrts){
+                responseDtos.add(new RestrtListByResponseDto(restrt));
+            }
+        }
+        return responseDtos;
+    }
+
+
+
+    /**
+     * 주어진 위도와 경도를 기준으로 주어진 반경 내의 범위 좌표를 계산
+     *
+     * @param lat 중심 위도
+     * @param lon 중심 경도
+     * @param range 반경 (킬로미터)
+     * @return [최대 위도, 최소 위도, 최대 경도, 최소 경도]
+     */
+    public double[] getBoundingCoordinates(double lat, double lon, double range){
+        double dLat = range/EARTH_RADIUS_KM;
+        double dLon = range/(EARTH_RADIUS_KM * Math.cos(Math.toRadians(lat)));
+
+        double maxLat = lat + Math.toDegrees(dLat);
+        double minLat = lat - Math.toDegrees(dLat);
+        double maxLon = lon + Math.toDegrees(dLon);
+        double minLon = lon - Math.toDegrees(dLon);
+
+        maxLat = roundToSixDecimalPlaces(maxLat);
+        minLat = roundToSixDecimalPlaces(minLat);
+        maxLon = roundToSixDecimalPlaces(maxLon);
+        minLon = roundToSixDecimalPlaces(minLon);
+
+        return new double[]{maxLat,minLat,maxLon,minLon};
+    }
+    /**
+     * 위도,경도 소수점 6번째 자리로 반올림
+     *
+     * @param value 소수점 6번째 반올림 할 변수
+     * @return 반올림 한 결과값
+     * */
+    private double roundToSixDecimalPlaces(double value) {
+        return Math.round(value * 1_000_000.0) / 1_000_000.0;
+    }
+    /**
+     * 두 지점 사이의 거리 계산(Haversine formula)
+     *
+     * @param lat1 중심 위도
+     * @param lon1 중심 경도
+     * @param lat2 반경 내 위도
+     * @param lon2 반경 내 경도
+     * @return 두 지점 간의 거리 (킬로미터 단위)
+     * */
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return EARTH_RADIUS_KM * c; // 두 지점 간의 거리 (킬로미터 단위)
+    }
+
 
     /**
      * Review 엔티티를 ReviewResponseDto로 변환하는 메서드
