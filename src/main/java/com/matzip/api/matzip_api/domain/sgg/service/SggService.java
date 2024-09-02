@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -87,7 +88,7 @@ public class SggService {
      */
     public void uploadFile(MultipartFile file) {
         try (Reader reader = new BufferedReader(
-            new InputStreamReader(file.getInputStream(), "UTF-8"))) {
+            new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
             //기존 데이터 삭제
             jdbcTemplate.update("TRUNCATE TABLE sgg");
             redisTemplate.delete(SGG_LIST_CACHE_KEY);
@@ -101,7 +102,7 @@ public class SggService {
             String sql = "insert into sgg(do_si,ssg,logt,lat) values(?,?,?,?)";
             List<Object[]> batchArgs = new ArrayList<>();
 
-            try (CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader())) {
+            try (CSVParser csvParser = new CSVParser(reader, CSVFormat.Builder.create().setHeader().setSkipHeaderRecord(true).build())) {
                 for (CSVRecord csvRecord : csvParser) {
                     String doSi = csvRecord.get("do-si"); // 헤더 이름 그대로 사용
                     String csvSgg = csvRecord.get("sgg");
@@ -122,36 +123,5 @@ public class SggService {
         }
     }
 
-    /** csv파일 업로드 (insert문 파일 row 개수만큼 시행) - 삭제 예정
-     * 약 15s 소요
-     * @param file 업로드할 csv 파일
-     * */
-    public void uploadFile2(MultipartFile file) {
-        try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), "UTF-8"))) {
-            //기존 데이터 삭제
-            sggRepository.deleteAll();
-
-            // BOM제거
-            reader.mark(1);
-            if (reader.read() != 0xFEFF) {
-                reader.reset();
-            }
-
-            try (CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader())) {
-                for (CSVRecord csvRecord : csvParser) {
-                    String doSi = csvRecord.get("do-si"); // 헤더 이름 그대로 사용
-                    String csvSgg = csvRecord.get("sgg");
-                    double lon = Double.parseDouble(csvRecord.get("lon"));
-                    double lat = Double.parseDouble(csvRecord.get("lat"));
-
-                    Sgg sgg = new Sgg(doSi, csvSgg, lon, lat);
-                    sggRepository.save(sgg);
-                }
-            }
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 }

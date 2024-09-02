@@ -5,6 +5,7 @@ import static com.matzip.api.matzip_api.global.error.ErrorCode.INVALID_FILE_FORM
 
 import com.matzip.api.matzip_api.domain.sgg.service.SggService;
 import com.matzip.api.matzip_api.global.CommonResponse;
+import com.matzip.api.matzip_api.global.auth.domain.CustomUserDetails;
 import com.matzip.api.matzip_api.global.error.ErrorResponse;
 import com.matzip.api.matzip_api.global.exception.CustomException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,7 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +36,7 @@ public class SggController {
 
     @Operation(summary = "시군구 csv 파일을 DB에 저장", description = "시군구 csv 파일을 DB에 저장합니다.")
     @PostMapping("/upload/csv")
-    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file){
+    public ResponseEntity<?> uploadFile(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam("file") MultipartFile file){
         String fileName = file.getOriginalFilename();
         if (fileName == null || !fileName.endsWith(".csv")) {
             throw new CustomException(INVALID_FILE_FORMAT);
