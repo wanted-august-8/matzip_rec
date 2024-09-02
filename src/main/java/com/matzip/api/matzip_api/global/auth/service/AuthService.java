@@ -49,7 +49,8 @@ public class AuthService {
 
         tokenManager.validateRefreshToken(refreshToken);
         String username = tokenManager.getUsername(refreshToken);
+        Long userId = tokenManager.getUserId(refreshToken);
         tokenManager.deleteRefreshToken(refreshToken);
-        tokenManager.issueTokens(response, username);
+        tokenManager.issueTokens(response, username, userId);
     }
 }

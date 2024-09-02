@@ -78,7 +78,8 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authResult.getPrincipal();
         String username = customUserDetails.getUsername();
-        tokenManager.issueTokens(response, username);
+        Long userId = customUserDetails.getUserId();
+        tokenManager.issueTokens(response, username, userId);
     }
 
     @Override
