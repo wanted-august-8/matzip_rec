@@ -32,7 +32,9 @@ public class RestrtController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "맛집 상세 정보", description = "맛집의 상세 정보를 조회하며 해당 맛집의 리뷰 정보를 모두 포함합니다.")
     public ResponseEntity<CommonResponse<RestrtDetailResponseDto>> getRestrtDetail(
+        @Parameter(name = "id", description = "조회할 맛집의 ID", required = true, example = "1")
         @PathVariable Long id) {
         CommonResponse<RestrtDetailResponseDto> response = restrtService.getRestrtDetail(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
