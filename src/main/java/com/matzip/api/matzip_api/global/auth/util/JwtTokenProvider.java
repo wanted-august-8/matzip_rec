@@ -47,16 +47,24 @@ public class JwtTokenProvider {
     }
 
     public String getCategory(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()
+            .get("category", String.class);
     }
 
-    public String createJwt(String category, String username) {
+    public Long getUserId(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()
+            .get("userId", Long.class);
+    }
+
+    public String createJwt(String category, String username, Long userId) {
         return Jwts.builder()
             .claim("category", category)
             .claim("account", username)
+            .claim("userId", userId)
             .issuedAt(new Date(System.currentTimeMillis()))
             .expiration(new Date(
-                System.currentTimeMillis() + (category.equals("refresh") ? refreshExpiration: accessExpiration)))
+                System.currentTimeMillis() + (category.equals("refresh") ? refreshExpiration
+                    : accessExpiration)))
             .signWith(secretKey)
             .compact();
     }
