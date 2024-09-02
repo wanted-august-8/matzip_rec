@@ -58,5 +58,6 @@ public class Restrt {
     private String restrtNm;
 
     @OneToMany(mappedBy = "restrt", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Review> reviews = new ArrayList<>();
 }

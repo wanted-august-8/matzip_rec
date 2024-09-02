@@ -55,6 +55,9 @@ dependencies {
 	//fileupload
 	implementation 'org.apache.commons:commons-csv:1.11.0'
 
+	//jackson: redis에서 자바 역직렬화 문제 해결 패키지
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

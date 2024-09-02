@@ -18,10 +18,11 @@ import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import java.util.Set;
 import org.springframework.scheduling.annotation.Scheduled;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class RestrtService {
     private final OpenApiService openApiService;
     private final RestrtRepository restrtRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    private static final String CACHE_KEY_PREFIX = "restrt:";
+    private static final long CACHE_EXPIRATION = 600; // 600초 = 10분
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -116,8 +122,6 @@ public class RestrtService {
         entityManager.clear();
     }
   
-
-
     /**
      * 맛집의 상세 정보를 조회하는 메서드
      *
@@ -127,6 +131,15 @@ public class RestrtService {
      */
     @Transactional(readOnly = true)
     public CommonResponse<RestrtDetailResponseDto> getRestrtDetail(Long id) {
+        String cacheKey = CACHE_KEY_PREFIX + id;
+
+        // 캐시에서 데이터 조회
+        RestrtDetailResponseDto cachedData = (RestrtDetailResponseDto) redisTemplate.opsForValue().get(cacheKey);
+        if (cachedData != null) {
+            return CommonResponse.ok("맛집 상세 정보를 반환합니다. (캐시)", cachedData);
+        }
+
+        // 캐시에 데이터가 없는 경우 DB에서 조회
         // ID로 맛집 정보를 조회하고 동시에 리뷰도 함께 가져옴
         Restrt restrt = restrtRepository.findWithReviewsAndUsersById(id)
             .orElseThrow(() -> new CustomException(ErrorCode.RESTRT_NOT_FOUND));
@@ -138,6 +151,11 @@ public class RestrtService {
 
         // RestrtDetailResponseDto 객체를 생성
         RestrtDetailResponseDto responseDto = buildRestrtDetailResponseDto(restrt, reviews);
+
+        // 데이터를 캐시에 저장
+        if (restrt.getReviews().size() >= 1) { // 리뷰가 1개 이상일 경우에만 데이터 저장
+            redisTemplate.opsForValue().set(cacheKey, responseDto, CACHE_EXPIRATION, TimeUnit.SECONDS);
+        }
 
         return CommonResponse.ok("맛집 상세 정보를 반환합니다.", responseDto);
     }
@@ -195,8 +213,6 @@ public class RestrtService {
         return responseDtos;
     }
 
-
-
     /**
      * 주어진 위도와 경도를 기준으로 주어진 반경 내의 범위 좌표를 계산
      *
@@ -221,6 +237,7 @@ public class RestrtService {
 
         return new double[]{maxLat,minLat,maxLon,minLon};
     }
+
     /**
      * 위도,경도 소수점 6번째 자리로 반올림
      *
@@ -230,6 +247,7 @@ public class RestrtService {
     private double roundToSixDecimalPlaces(double value) {
         return Math.round(value * 1_000_000.0) / 1_000_000.0;
     }
+
     /**
      * 두 지점 사이의 거리 계산(Haversine formula)
      *
@@ -248,7 +266,6 @@ public class RestrtService {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return EARTH_RADIUS_KM * c; // 두 지점 간의 거리 (킬로미터 단위)
     }
-
 
     /**
      * Review 엔티티를 ReviewResponseDto로 변환하는 메서드

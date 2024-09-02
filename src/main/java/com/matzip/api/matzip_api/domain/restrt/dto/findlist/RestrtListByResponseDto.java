@@ -15,7 +15,6 @@ import lombok.Setter;
 @Builder
 public class RestrtListByResponseDto {
 
-
     private Long id;
     private String sigun_nm;
     private String sigun_cd;
