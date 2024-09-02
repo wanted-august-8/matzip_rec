@@ -173,8 +173,8 @@ public class RestrtService {
             // 거리순으로 정렬
             restrts.sort(Comparator.comparingDouble(restrt ->
                 calculateDistance(parseDoublelat, parseDoublelon,
-                    restrt.getRefine_wgs84_lat().doubleValue(),
-                    restrt.getRefine_wgs84_logt().doubleValue())
+                    restrt.getRefineWgs84Lat().doubleValue(),
+                    restrt.getRefineWgs84Logt().doubleValue())
             ));
 
             for (Restrt restrt: restrts){
