@@ -149,8 +149,8 @@ localhost: [http://localhost:8080/api/swagger-ui/index.html](http://localhost:80
 ## 프로젝트 진행 및 이슈 관리
 <details>
   <summary><b>프로젝트 진행 및 이슈 관리</b></summary>
-  <img src= "docs/matzip_project1.pnt" width="900"/>
-  <img src= "docs/matzip_project2.pnt" width="900"/>
+  <img src= "docs/matzip_project1.png" width="900"/>
+  <img src= "docs/matzip_project2.png" width="900"/>
 </details>
 
 <br/>
