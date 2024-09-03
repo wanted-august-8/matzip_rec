@@ -52,7 +52,7 @@
 ## 아키텍처
 <details>
     <summary><b>아키텍처</b></summary>
-    <img src= "docs/아키텍처.png" width="32%"/>
+    <img src= "docs/matzip-architecture.png" width="32%"/>
 </details>
 
 <br/>
