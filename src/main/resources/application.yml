@@ -27,6 +27,7 @@ spring:
         format_sql: true
         show_sql: true
         highlight_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
 
   # Spring Security 설정
   security:
@@ -44,11 +45,12 @@ spring:
       host: localhost
       port: 6379
       password: August8!
-      connect-timeout: 2000ms
 
-# logback 설정
-logging:
-  config: classpath:logback-${spring.profiles.active}.xml
+# JWT 설정
+jwt:
+  secret: 48b1139d703a1d10f9d0f718445fd9ccab85d5169131598f4ac55d913a7e17d7
+  access-token-validate-in-seconds: 3600 # 1시간
+  refresh-token-validate-in-seconds: 604800 # 7일
 
 # Springdoc OpenAPI 설정
 springdoc:

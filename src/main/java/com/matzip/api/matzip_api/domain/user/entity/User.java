@@ -46,4 +46,13 @@ public class User {
 
     @Column(name = "modified_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime modifiedAt;
+
+    public void updateLocation(BigDecimal lat, BigDecimal logt) {
+        this.lat = lat;
+        this.logt = logt;
+    }
+
+    public void updateUseLunchRecommendation(boolean useLunchRecommendation) {
+        this.useLunchRecommendation = useLunchRecommendation;
+    }
 }
