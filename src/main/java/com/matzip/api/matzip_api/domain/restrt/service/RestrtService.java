@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import java.util.Set;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -210,6 +213,39 @@ public class RestrtService {
                 responseDtos.add(new RestrtListByResponseDto(restrt));
             }
         }
+        return responseDtos;
+    }
+
+    /**
+     * 알림용으로 평점순 상위 5개의 맛집 목록 조회
+     *
+     * @param lat 위도
+     * @param lon 경도
+     * @param range 범위(km)
+     * @return 평점순 상위 5개의 맛집 목록
+     */
+    public List<RestrtListByResponseDto> getTop5RestaurantsByRating(BigDecimal lat, BigDecimal lon, double range) {
+        double parseDoublelat = lat.doubleValue();
+        double parseDoublelon = lon.doubleValue();
+
+        double[] boundingCoordinates = getBoundingCoordinates(parseDoublelat, parseDoublelon, range);
+        double bounding_maxLat = boundingCoordinates[0];
+        double bounding_minLat = boundingCoordinates[1];
+        double bounding_maxLon = boundingCoordinates[2];
+        double bounding_minLon = boundingCoordinates[3];
+
+        Pageable pageable = PageRequest.of(0, 5); // 상위 5개만 가져오기
+        List<RestrtListByResponseDto> responseDtos = new ArrayList<>();
+
+        // 평점순 상위 5개의 맛집을 가져오는 쿼리 실행
+        Page<Restrt> top5Restaurants = restrtRepository.findByLocationOrderByReview(bounding_minLat, bounding_maxLat, bounding_minLon, bounding_maxLon, pageable);
+
+        if (top5Restaurants.hasContent()) {
+            for (Restrt restrt : top5Restaurants.getContent()) {
+                responseDtos.add(new RestrtListByResponseDto(restrt));
+            }
+        }
+
         return responseDtos;
     }
 
