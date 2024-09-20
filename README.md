@@ -42,8 +42,9 @@
 **배포** :
 ![AWS EC2](https://img.shields.io/badge/AWS-EC2-orange) 
 ![GitHub Actions](https://img.shields.io/badge/Github-Actions-black)
-![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
-![Nginx](https://img.shields.io/badge/Nginx-009639?logo=nginx&logoColor=white)
+![S3](https://img.shields.io/badge/S3-skyblue)
+![CodeDeploy](https://img.shields.io/badge/CodeDeploy-blue)
+
 
 **ETC** : ![Redis](https://img.shields.io/badge/Redis-red)
 
