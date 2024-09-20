@@ -178,8 +178,7 @@ localhost: [http://localhost:8080/api/swagger-ui/index.html](http://localhost:80
 ### 🐬김재령 [Github](https://www.github.com/Minerva08)
 
 - **역할**: CI/CD 파이프라인 구축 및 서버 아키텍처 구성
-- **역할**: CI/CD 파이프라인 구축 및 서버 아키텍처 구성
-- gitHub Actions,S3,CodeDeploy 를 통한 CICD 구현
+- gitHub Actions(branch:dev),S3,CodeDeploy 를 통한 CICD 구현
 - 애플리케이션 실행/중지 스크립트 작성
 - 구축 과정에서 발생한 다양한 오류들(빌드 실패, 테스트 실패 등)을 해결하면서 DevOps의 개념과 툴들의 작동 원리를 깊이 이해하게 되었음
 
